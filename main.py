@@ -30,7 +30,7 @@ class Tripteron:
         self.transform_mat = self.generate_transform_matrix()
         self.simulation = simulation
         if not simulation:
-            self.serial = serial.Serial('/dev/tty.usbmodem1811', 115200) # TODO: Change to match your laptop/pc
+            self.serial = serial.Serial('/dev/tty.usbmodem1811', 115200)  # TODO: Change to match your laptop/pc
             self.serial.write("\r\n\r\n")  # grbl wake-up
             time.sleep(2)  # Wait for grbl to initialize
             self.serial.flushInput()  # Flush startup text in serial input
@@ -130,6 +130,10 @@ class Tripteron:
 
         return True
 
+    def shutdown(self):
+        if not self.simulation:
+            self.serial.close()
+
 
 """
 Limits (from CAD): 
@@ -157,7 +161,13 @@ if __name__ == "__main__":
     print(f"Motors pos: {[robot.p1.x, robot.p2.x, robot.p3.x]}")
 
     while True:
-        target = (float(n) for n in input("enter coordinates (x y z): ").split(" "))
+        target = input("enter coordinates (x y z): ")
+        if target == "EXIT":
+            robot.shutdown()
+            break
+
+        target = (float(n) for n in target.split(" "))
+
         ret = robot.move(*target)
 
         if ret:

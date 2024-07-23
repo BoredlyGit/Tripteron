@@ -46,44 +46,44 @@ class Plane:
         return np.matmul(np.linalg.inv(mat), vec)
 
 
-# if __name__ == "__main__":
-#     # test code for generating the transform matrix
-#     p1 = Plane((1, 1, 1), (180, 44.593, 0))
-#     p2 = Plane((1, -1, 1), (180, -44.593, 0))
-#     p3 = Plane((-1, 0, 1), (-100, 0, -2.5))
-#
-#     init = Plane.intersect(p1, p2, p3)
-#
-#     p1 = Plane((1, 1, 1), (181, 44.593, 0))
-#     p2 = Plane((1, -1, 1), (180, -44.593, 0))
-#     p3 = Plane((-1, 0, 1), (-100, 0, -2.5))
-#
-#     p1_delta = init - Plane.intersect(p1, p2, p3)
-#     print(p1_delta)
-#
-#     p1 = Plane((1, 1, 1), (180, 44.593, 0))
-#     p2 = Plane((1, -1, 1), (181, -44.593, 0))
-#     p3 = Plane((-1, 0, 1), (-100, 0, -2.5))
-#
-#     p2_delta = init - Plane.intersect(p1, p2, p3)
-#     print(p2_delta)
-#
-#     p1 = Plane((1, 1, 1), (180, 44.593, 0))
-#     p2 = Plane((1, -1, 1), (180, -44.593, 0))
-#     p3 = Plane((-1, 0, 1), (-99, 0, -2.5))
-#
-#     p3_delta = init - Plane.intersect(p1, p2, p3)
-#     print(p3_delta)
-#
-#     """mat * vec(p1, p2, p3) = vec(x, y ,z)"""
-#     mat = np.hstack((p1_delta,  p2_delta, p3_delta))
-#     print(mat)
-#
-#     # print(np.matmul(mat, np.array((-1, -1, 1))))
-#     # print(np.matmul(mat, np.array(([-1], [-1], [1]))))
-#
-#     map = np.linalg.inv(mat)
-#     print(map)
-#     print(np.matmul(map, np.array((-1, 0, 0))))
-#
+if __name__ == "__main__":
+    # test code for generating the transform matrix
+    p1 = Plane((1, 1, 1), (180, 44.593, 0))
+    p2 = Plane((1, -1, 1), (180, -44.593, 0))
+    p3 = Plane((-1, 0, 1), (-100, 0, -2.5))
+
+    init = Plane.intersect(p1, p2, p3)
+
+    p1 = Plane((1, 1, 1), (181, 44.593, 0))
+    p2 = Plane((1, -1, 1), (180, -44.593, 0))
+    p3 = Plane((-1, 0, 1), (-100, 0, -2.5))
+
+    p1_delta = init - Plane.intersect(p1, p2, p3)
+    print(p1_delta)
+
+    p1 = Plane((1, 1, 1), (180, 44.593, 0))
+    p2 = Plane((1, -1, 1), (181, -44.593, 0))
+    p3 = Plane((-1, 0, 1), (-100, 0, -2.5))
+
+    p2_delta = init - Plane.intersect(p1, p2, p3)
+    print(p2_delta)
+
+    p1 = Plane((1, 1, 1), (180, 44.593, 0))
+    p2 = Plane((1, -1, 1), (180, -44.593, 0))
+    p3 = Plane((-1, 0, 1), (-99, 0, -2.5))
+
+    p3_delta = init - Plane.intersect(p1, p2, p3)
+    print(p3_delta)
+
+    """mat * vec(p1, p2, p3) = vec(x, y ,z)"""
+    mat = np.hstack((p1_delta,  p2_delta, p3_delta))
+    print(mat)
+
+    # print(np.matmul(mat, np.array((-1, -1, 1))))
+    # print(np.matmul(mat, np.array(([-1], [-1], [1]))))
+
+    map = np.linalg.inv(mat)
+    print(map)
+    print(np.matmul(map, np.array((-1, 0, 0))))
+
 #

@@ -1,4 +1,4 @@
-from math_utils import Plane
+from utils.math_utils import Plane
 import numpy as np
 import serial
 import time
@@ -8,29 +8,35 @@ class Slider(Plane):
     def __init__(self, *args, limits=(0, 0)):
         super().__init__(*args)
         self.limits = limits
+        self.init_x = self._x
 
 
 class Tripteron:
-    def __init__(self, p1: Slider, p2: Slider, p3: Slider, head_z_offset, slider_dist_limits, simulation=False):
+    def __init__(self, p1: Slider, p2: Slider, p3: Slider, head_offset, slider_dist_limits, simulation=False):
         """
         is tha robot!!
 
         :param p1: Slider 1 (typically normal vector (1, 1, 1))
         :param p2: Slider 2 (typically normal vector (1, -1, 1))
         :param p3: Slider 3 (typically normal vector (-1, 0, 1))
-        :param head_z_offset: z offset from the intersection of the 3 planes to the head
+        :param head_offset: (x y z) offset from the intersection of the 3 planes to the head
         :param slider_dist_limits: min/max distance to maintain between p1/p1 and p3 (so the arms don't get tangled up)
         """
         self.p1 = p1
         self.p2 = p2
         self.p3 = p3
         self.x, self.y, self.z = Plane.intersect(p1, p2, p3).flatten()
-        self.z += head_z_offset
+        self.x += head_offset[0]
+        self.y += head_offset[1]
+        self.z += head_offset[2]
+
         self.slider_dist_limits = slider_dist_limits
         self.transform_mat = self.generate_transform_matrix()
+
         self.simulation = simulation
         if not simulation:
-            self.serial = serial.Serial('/dev/tty.usbmodem1811', 115200)  # TODO: Change to match your laptop/pc
+            # TODO: send configuration ($X = val) for homing & whatnot -- house in another file?
+            self.serial = serial.Serial('COM3', 115200)  # TODO: Change to match your laptop/pc
             self.serial.write("\r\n\r\n")  # grbl wake-up
             time.sleep(2)  # Wait for grbl to initialize
             self.serial.flushInput()  # Flush startup text in serial input
@@ -117,6 +123,7 @@ class Tripteron:
         # see https://github.com/michaelfranzl/grbl-streamer if this gets too complicated
         if not self.simulation:
             # REMEMBER: wire the robot so that x, y, z correspond to the correct sliders
+            # TODO: Compensate for the fact that grbl reads the starting position as (0, 0, 0) NO MATTER WHAT
             self.serial.write(f"G0 X{self.p1.x + p1_delta} Y{self.p2.x + p2_delta} Z{self.p3.x + p3_delta}\n")
             grbl_out = self.serial.readline()  # Wait for grbl response with carriage return
             print(grbl_out.strip())
@@ -149,10 +156,12 @@ Limits (from CAD):
 """
 
 if __name__ == "__main__":
-    robot = Tripteron(Slider((1, 1, 1), (376.5, 44.593, 0), limits=(155, 376.5)),  # starting position coordinates from CAD
+    robot = Tripteron(  # starting pos pulled from CAD
+                      Slider((1, 1, 1), (376.5, 44.593, 0), limits=(155, 376.5)),
                       Slider((1, -1, 1), (376.5, -44.593, 0), limits=(155, 376.5)),
                       Slider((-1, 0, 1), (66.376, 0, -2.5), limits=(10, 325)),
-                      head_z_offset=-56.560,  # calculated by setting to 0 to get intersect, then subtracting cad z
+                      # calculated by setting to 0 to get intersect, then subtracting head starting pos from CAD
+                      head_offset=(-36.8447, 0, -56.560),
                       slider_dist_limits=(140, 305),
                       simulation=True)
 

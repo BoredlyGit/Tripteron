@@ -1,0 +1,9 @@
+; gcode to configure grbl for MY tripteron. Will need to be changed between machines
+
+; steps_per_mm = (steps_per_revolution*microsteps)/mm_per_rev
+; 18.480 = (200*1)/10.8225
+$100 = 18.480
+$101 = 18.480
+$102 = 18.480
+
+
